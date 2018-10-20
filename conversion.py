@@ -67,3 +67,11 @@ def pytldr_lsa():
         text, topics=4, length=5, binary_matrix=True, topic_sigma_threshold=0.5
     )
     print (summary)
+
+#----Call all the functions to compare the summaries
+# lexrank_summarizer()
+# lsa_summarizer()
+# luhn_summarizer()
+# gensim_summarizer()
+# pytldr_textrank()
+# pytldr_lsa()

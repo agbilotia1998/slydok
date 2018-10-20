@@ -4,26 +4,35 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from io import BytesIO, FileIO
-from docx import Document
-
-document = Document('test.docx')
+import doc as dc
+import conversion as con
 
 prs = Presentation()
-title_slide_layout = prs.slide_layouts[0]
+title_slide_layout = prs.slide_layouts[1]
+blank_slide_layout = prs.slide_layouts[0]
+
 slide = prs.slides.add_slide(title_slide_layout)
 title = slide.shapes.title
 subtitle = slide.placeholders[1]
 
-def iter_headings(paragraphs):
-    for paragraph in paragraphs:
-        if paragraph.style.name.startswith('Heading'):
-            yield paragraph
+l = dc.find_all_font_sizes(dc.document.paragraphs)
+store = dc.analyze_by_size(dc.document.paragraphs, l)
+dc.remove_extra_images(store)
 
-for para in document.paragraphs:
-    if para.style.name == 'Title':
-        title.text = para.text
-    if para.style.name == 'Subtitle':
-        subtitle.text = para.text
+print(store)
 
-print(title.text, subtitle.text)
+for key, value in store.items():
+    new_slide = prs.slides.add_slide(blank_slide_layout)
+
+con.text = ' new text here'
+
+#----Call all the functions to compare the summaries
+# con.lexrank_summarizer()
+# con.lsa_summarizer()
+# con.luhn_summarizer()
+# con.gensim_summarizer()
+# con.pytldr_textrank()
+# con.pytldr_lsa()
+
+
 prs.save('test.pptx')

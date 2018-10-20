@@ -19,7 +19,7 @@ from pytldr.summarize.lsa import LsaSummarizer, LsaOzsoy, LsaSteinberger
 LANGUAGE = "english"
 SENTENCES_COUNT = 2
 
-text = 'Going back to the RCT, as I mentioned, I was involved in developing a new feature for it, which was refresher explorations. This feature, which although served it purpose to some extent, was not a very streamlined approach to the problem, and hence, when I found a project which replaced that with a much better alternative, I thought, this would be the perfect project for me to do. This would also greatly increase the learner experience as currently, with refresher exploration, a lot of redirection to and from pages are present, which could confuse learners, while with Skills, it is going to be played as a part of the exploration itself, and therefore would make the transition to and from a refresher skill seamless.Coming to the introduction of topics and stories to Oppia, to replace collections, these would also greatly increase the sites functionality. One problem, that was seen in the RCT, that could be fixed is that the learner was jumping to later explorations in a collection, without completing the previous ones. With the skills construct added to stories, this could be prevented and as such, make sure that the learner knows all the prerequisites before starting a lesson.'
+text = ''
 
 parser = PlaintextParser.from_string((text), sumytoken(LANGUAGE))
 stemmer = Stemmer(LANGUAGE)
@@ -67,11 +67,3 @@ def pytldr_lsa():
         text, topics=4, length=5, binary_matrix=True, topic_sigma_threshold=0.5
     )
     print (summary)
-
-#----Call all the functions to compare the summaries
-lexrank_summarizer()
-lsa_summarizer()
-luhn_summarizer()
-gensim_summarizer()
-pytldr_textrank()
-pytldr_lsa()

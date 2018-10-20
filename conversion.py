@@ -19,10 +19,6 @@ from pytldr.summarize.lsa import LsaSummarizer, LsaOzsoy, LsaSteinberger
 LANGUAGE = "english"
 SENTENCES_COUNT = 2
 
-text = ''
-
-parser = PlaintextParser.from_string((text), sumytoken(LANGUAGE))
-stemmer = Stemmer(LANGUAGE)
 
 def lexrank_summarizer():
     print("\n","*"*30, "LEXRANK SUMARIZER", "*"*30)
@@ -38,16 +34,24 @@ def lsa_summarizer():
     for sentence in summarizer_lsa(parser.document, SENTENCES_COUNT):
         print (sentence)
         
-def luhn_summarizer():
+def luhn_summarizer(data):
+    text = data
+    parser = PlaintextParser.from_string((text), sumytoken(LANGUAGE))
+    stemmer = Stemmer(LANGUAGE)    
     print ("\n","*"*30, "LUHN SUMMARIZER", "*"*30)
     summarizer_luhn = LuhnSummarizer(stemmer)
     summarizer_luhn.stop_words = get_stop_words(LANGUAGE)
+    result = ''
     for sentence in summarizer_luhn(parser.document, SENTENCES_COUNT):
-        print (sentence)
+        result += str(sentence)
+    
+    return result
         
-def gensim_summarizer():
+def gensim_summarizer(data):
+    text = data
     print ("\n","*"*30, "GENSIM SUMMARIZER", "*"*30)
     print (summarize(text))
+    return summarize(text)
 
 def pytldr_textrank():
     print ("\n","*"*30, "PYTLDR TEXTRANK", "*"*30)

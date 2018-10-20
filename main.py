@@ -4,26 +4,25 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from io import BytesIO, FileIO
-from docx import Document
+import doc as dc
 
-document = Document('test.docx')
+# document = Document('b.docx')
 
 prs = Presentation()
 title_slide_layout = prs.slide_layouts[0]
+blank_slide_layout = prs.slide_layouts[6]
+
 slide = prs.slides.add_slide(title_slide_layout)
 title = slide.shapes.title
 subtitle = slide.placeholders[1]
 
-def iter_headings(paragraphs):
-    for paragraph in paragraphs:
-        if paragraph.style.name.startswith('Heading'):
-            yield paragraph
+l = dc.find_all_font_sizes(dc.document.paragraphs)
+store = dc.analyze_by_size(dc.document.paragraphs, l)
+dc.remove_extra_images(store)
 
-for para in document.paragraphs:
-    if para.style.name == 'Title':
-        title.text = para.text
-    if para.style.name == 'Subtitle':
-        subtitle.text = para.text
+print(store)
 
-print(title.text, subtitle.text)
+for key, value in store.items():
+    new_slide = prs.slides.add_slide(blank_slide_layout)
+
 prs.save('test.pptx')

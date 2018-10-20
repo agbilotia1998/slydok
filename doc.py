@@ -8,7 +8,7 @@ import re
 
 pp = pprint.PrettyPrinter(indent=2)
 
-filename = 'test.docx'
+filename = 'c.docx'
 document = Document(filename)
 images = extract_images(filename)
 image_count = 1
@@ -30,9 +30,12 @@ def analyze_by_size(paragraphs, sizes):
     lines = []
     headings = 0
     prev_heading = ''
-    d = {
-        "children": {}, "images": [], "text": []
-    }
+    d= OrderedDict()
+    d["children"] = {}
+    d["images"] = []
+    d["ul"] = []
+    d["text"] = []
+
     image_count = 1
 
     for p in paragraphs:
@@ -41,7 +44,7 @@ def analyze_by_size(paragraphs, sizes):
 
         if result is not None:
             image_name = 'image{0}'.format(image_count)
-            print image_name
+            print(image_name)
 
             if 'images' in d:
                 d['images'].append(image_name)
@@ -107,7 +110,3 @@ def remove_extra_images(store):
                     store['images'].remove(image)
 # store = analyze(document.paragraphs, 1)
 # pp.pprint(store)
-l = find_all_font_sizes(document.paragraphs)
-store = analyze_by_size(document.paragraphs, l)
-remove_extra_images(store)
-pp.pprint(store)

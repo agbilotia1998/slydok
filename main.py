@@ -8,20 +8,22 @@ from docx import Document
 
 document = Document('test.docx')
 
+prs = Presentation()
+title_slide_layout = prs.slide_layouts[0]
+slide = prs.slides.add_slide(title_slide_layout)
+title = slide.shapes.title
+subtitle = slide.placeholders[1]
+
 def iter_headings(paragraphs):
     for paragraph in paragraphs:
         if paragraph.style.name.startswith('Heading'):
             yield paragraph
 
-for para in iter_headings(document.paragraphs):
-    print(para.text)
+for para in document.paragraphs:
+    if para.style.name == 'Title':
+        title.text = para.text
+    if para.style.name == 'Subtitle':
+        subtitle.text = para.text
 
-prs = Presentation()
-title_slide_layout = prs.slide_layouts[0]
-slide = prs.slides.add_slide(title_slide_layout)
-title = slide.shapes.title
-subtitle = slide.placeholders[0]
-
-title.text = "Hello, World!"
-subtitle.text = "python-pptx was here!"
+print(title.text, subtitle.text)
 prs.save('test.pptx')

@@ -11,6 +11,7 @@ import docx
 from pptx.util import Inches
 from images import extract_images
 import scipy.ndimage
+import re
 
 filename = 'c.docx'
 document = Document(filename)
@@ -24,6 +25,23 @@ body_shape = None
 tf = None
 images = extract_images(filename)
 image_count = 1
+default_constraint = 900
+constraint = 900
+
+
+def add_overflow_slide(result):
+    layout = prs.slide_layouts[6]
+    slide = prs.slides.add_slide(layout)
+    body_shape = slide.shapes.add_textbox(Inches(0.5),Inches(1.15),Inches(8.8),Inches(0.0))
+    global tf
+    tf = body_shape.text_frame
+    tf.word_wrap = True
+    p = tf.add_paragraph()
+    p.text = result
+    p.level = 0
+    global constraint
+    constraint = default_constraint - len(result)
+    print constraint
 
 def emu_to_pixels(emu):
     return int(round(emu / 9525.0))
@@ -39,6 +57,8 @@ def iter_headings(paragraphs):
 my_list = list()
 ct = 0
 head = ''
+present = 0
+
 for para in document.paragraphs:
     my_list.append(para.style.name)
 
@@ -53,7 +73,8 @@ for para in document.paragraphs:
             # slide.placeholders[1].getparent().remove(slide.placeholders[1])
             heading = slide.shapes.title
             heading.text = para.text
-            
+            constraint = default_constraint
+
             body_shape = slide.shapes.add_textbox(Inches(0.5),Inches(1.15),Inches(8.8),Inches(0.0))
             tf = body_shape.text_frame
             tf.word_wrap = True
@@ -69,16 +90,35 @@ for para in document.paragraphs:
         # run = text_place.add_run()
         # font = run.font
         # font.size = Pt(18)
-        l =  len(para.text)
-        arr = para.text.split('.')
+        # slide_list = get_slides(para.text, present)
+
+        # if len(slide_list) == 1:
+        #     present += len(slide_list[-1])
+        # else:
+        #     present = len(slide_list[-1])
+        # print present
         # if(len(arr) > 2):
         #     result = gensim_summarizer(para.text)
         # else:
         result = head + para.text
-        head = ''
-        p = tf.add_paragraph()
-        p.text = result
-        p.level = 0
+
+        print "-----" + str(len(result))
+        print "--------" + str(constraint)
+        if len(result) > constraint:
+            head = ''
+            p = tf.add_paragraph()
+            p.text = result[:constraint]
+            p.level = 0
+            add_overflow_slide(result[constraint + 1:])
+        else:
+            constraint -= len(result)
+            head = ''
+            p = tf.add_paragraph()
+            p.text = result
+            p.level = 0
+
+        # for i in range(1, len(slide_list)):
+        #     add_overflow_slide(slide_list[i])
 
     if len(para._p.r_lst[0].drawing_lst):
         image_name = 'image{0}.jpeg'.format(image_count)

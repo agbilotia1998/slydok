@@ -12,7 +12,7 @@ def extract_images(filename):
 
     #get all files in word/media/ directory
     images = filter(lambda x: x.startswith('word/media/'), all_files)
-    # print images
+    print images
 
     #open an image and save it
     # image1 = z.open('word/media/image1.jpeg').read()
@@ -22,7 +22,7 @@ def extract_images(filename):
     # f = open('image2.jpeg','wb')
     # f.write(image2)
 
-    for i in range(1, len(images)):
+    for i in range(1, len(images)+1):
         image_name = 'image{0}.jpeg'.format(i)
         image = z.open('word/media/' + image_name).read()
         f = open(image_name, 'wb')

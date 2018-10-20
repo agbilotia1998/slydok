@@ -3,7 +3,7 @@ pyenv
 .vscode
 credentials.json
 *.doc
-*.docx
+# *.docx
 *.pdf
 *.pptx
 *.jpeg

@@ -39,6 +39,8 @@ def analyze_by_size(paragraphs, sizes):
     image_count = 1
 
     for p in paragraphs:
+        if len(p._p.r_lst[0].drawing_lst):
+            print p._p.r_lst[0].xml, dir(p._p.r_lst[0]), p._p.r_lst[0].drawing_lst
         xml_string = str(p._p.xml)
         result = re.search('graphic', xml_string)
 
@@ -110,3 +112,9 @@ def remove_extra_images(store):
                     store['images'].remove(image)
 # store = analyze(document.paragraphs, 1)
 # pp.pprint(store)
+
+title = document.paragraphs[0].text
+l = find_all_font_sizes(document.paragraphs[1:])
+store = analyze_by_size(document.paragraphs[1:], l)
+remove_extra_images(store)
+pp.pprint(store)

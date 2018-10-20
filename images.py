@@ -5,14 +5,14 @@ def extract_images(filename):
     z = zipfile.ZipFile(filename)
 
     #print list of valid attributes for ZipFile object
-    print dir(z)
+    # print dir(z)
 
     #print all files in zip archive
     all_files = z.namelist()
 
     #get all files in word/media/ directory
     images = filter(lambda x: x.startswith('word/media/'), all_files)
-    print images
+    # print images
 
     #open an image and save it
     # image1 = z.open('word/media/image1.jpeg').read()

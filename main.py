@@ -1,8 +1,8 @@
 from pptx import Presentation
-from googleapiclient import http
-from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
+# from googleapiclient import http
+# from googleapiclient.discovery import build
+# from httplib2 import Http
+# from oauth2client import file, client, tools
 from io import BytesIO, FileIO
 from docx import Document
 from pptx.util import Pt
@@ -36,7 +36,7 @@ for para in document.paragraphs:
         heading.text = para.text
         body_shape = slide.shapes.placeholders[1]
         tf = body_shape.text_frame
-    
+
     if(para.style.name == 'Normal'):
 
         # run = text_place.add_run()
@@ -49,7 +49,7 @@ for para in document.paragraphs:
         # else:
         result = para.text
 
-        para.style.font.size = docx.shared.Pt(4)     
+        para.style.font.size = docx.shared.Pt(4)
         p = tf.add_paragraph()
         p.text = result
         p.level = 0

@@ -6,11 +6,9 @@ from oauth2client import file, client, tools
 from io import BytesIO, FileIO
 import doc as dc
 
-# document = Document('b.docx')
-
 prs = Presentation()
-title_slide_layout = prs.slide_layouts[0]
-blank_slide_layout = prs.slide_layouts[6]
+title_slide_layout = prs.slide_layouts[1]
+blank_slide_layout = prs.slide_layouts[0]
 
 slide = prs.slides.add_slide(title_slide_layout)
 title = slide.shapes.title
@@ -24,5 +22,6 @@ print(store)
 
 for key, value in store.items():
     new_slide = prs.slides.add_slide(blank_slide_layout)
+
 
 prs.save('test.pptx')

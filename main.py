@@ -4,35 +4,57 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from io import BytesIO, FileIO
-import doc as dc
-import conversion as con
+from docx import Document
+from pptx.util import Pt
+from conversion import gensim_summarizer
+import docx
+
+document = Document('c.docx')
 
 prs = Presentation()
-title_slide_layout = prs.slide_layouts[1]
-blank_slide_layout = prs.slide_layouts[0]
-
+title_slide_layout = prs.slide_layouts[0]
 slide = prs.slides.add_slide(title_slide_layout)
 title = slide.shapes.title
 subtitle = slide.placeholders[1]
+body_shape = None
+tf = None
 
-l = dc.find_all_font_sizes(dc.document.paragraphs)
-store = dc.analyze_by_size(dc.document.paragraphs, l)
-dc.remove_extra_images(store)
+def iter_headings(paragraphs):
+    for paragraph in paragraphs:
+        if paragraph.style.name.startswith('Heading'):
+            yield paragraph
 
-print(store)
+for para in document.paragraphs:
+    if para.style.name == 'Title':
+        title.text = para.text
+    if para.style.name == 'Subtitle':
+        subtitle.text = para.text
+    if para.style.name.startswith('Heading'):
+        layout = prs.slide_layouts[1]
+        slide = prs.slides.add_slide(layout)
+        heading = slide.shapes.title
+        heading.text = para.text
+        body_shape = slide.shapes.placeholders[1]
+        tf = body_shape.text_frame
+    
+    if(para.style.name == 'Normal'):
 
-for key, value in store.items():
-    new_slide = prs.slides.add_slide(blank_slide_layout)
+        # run = text_place.add_run()
+        # font = run.font
+        # font.size = Pt(18)
+        l =  len(para.text)
+        arr = para.text.split('.')
+        # if(len(arr) > 2):
+        #     result = gensim_summarizer(para.text)
+        # else:
+        result = para.text
 
-con.text = ' new text here'
+        para.style.font.size = docx.shared.Pt(4)     
+        p = tf.add_paragraph()
+        p.text = result
+        p.level = 0
 
-#----Call all the functions to compare the summaries
-# con.lexrank_summarizer()
-# con.lsa_summarizer()
-# con.luhn_summarizer()
-# con.gensim_summarizer()
-# con.pytldr_textrank()
-# con.pytldr_lsa()
+    print para.style
 
-
+print(title.text, subtitle.text)
 prs.save('test.pptx')

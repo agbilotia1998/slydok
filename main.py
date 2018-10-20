@@ -9,8 +9,11 @@ from pptx.util import Pt
 from conversion import gensim_summarizer
 import docx
 from pptx.util import Inches
+from images import extract_images
+import scipy.ndimage
 
-document = Document('c.docx')
+filename = 'c.docx'
+document = Document(filename)
 
 prs = Presentation()
 title_slide_layout = prs.slide_layouts[0]
@@ -19,6 +22,14 @@ title = slide.shapes.title
 subtitle = slide.placeholders[1]
 body_shape = None
 tf = None
+images = extract_images(filename)
+image_count = 1
+
+def emu_to_pixels(emu):
+    return int(round(emu / 9525.0))
+
+def pixels_to_emu(pixels):
+    return int(pixels * 9525)
 
 def iter_headings(paragraphs):
     for paragraph in paragraphs:
@@ -57,6 +68,17 @@ for para in document.paragraphs:
         p = tf.add_paragraph()
         p.text = result
         p.level = 0
+
+    if len(para._p.r_lst[0].drawing_lst):
+        image_name = 'image{0}.jpeg'.format(image_count)
+        image_count += 1
+        height, width, channels = scipy.ndimage.imread(image_name).shape
+
+        blank_slide_layout = prs.slide_layouts[6]
+        slide = prs.slides.add_slide(blank_slide_layout)
+        left = (prs.slide_width - pixels_to_emu(width)) / 3
+        top = (prs.slide_height - pixels_to_emu(height)) / 3
+        pic = slide.shapes.add_picture(image_name, left, top)
 
     print para.style
 

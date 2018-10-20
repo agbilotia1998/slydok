@@ -8,6 +8,7 @@ from docx import Document
 from pptx.util import Pt
 from conversion import gensim_summarizer
 import docx
+from pptx.util import Inches
 
 document = Document('c.docx')
 
@@ -32,10 +33,14 @@ for para in document.paragraphs:
     if para.style.name.startswith('Heading'):
         layout = prs.slide_layouts[1]
         slide = prs.slides.add_slide(layout)
+        # slide.placeholders[1].getparent().remove(slide.placeholders[1])
         heading = slide.shapes.title
         heading.text = para.text
-        body_shape = slide.shapes.placeholders[1]
+        
+        body_shape = slide.shapes.add_textbox(Inches(0.5),Inches(1.1),Inches(8.8),Inches(0.0))
         tf = body_shape.text_frame
+        tf.word_wrap = True
+
     
     if(para.style.name == 'Normal'):
 
@@ -49,7 +54,6 @@ for para in document.paragraphs:
         # else:
         result = para.text
 
-        para.style.font.size = docx.shared.Pt(4)     
         p = tf.add_paragraph()
         p.text = result
         p.level = 0

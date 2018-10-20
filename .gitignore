@@ -6,3 +6,5 @@ credentials.json
 *.docx
 *.pdf
 *.pptx
+*.jpeg
+*.pyc

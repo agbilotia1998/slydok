@@ -36,22 +36,33 @@ def iter_headings(paragraphs):
         if paragraph.style.name.startswith('Heading'):
             yield paragraph
 
+my_list = list()
+ct = 0
+head = ''
 for para in document.paragraphs:
+    my_list.append(para.style.name)
+
     if para.style.name == 'Title':
         title.text = para.text
     if para.style.name == 'Subtitle':
         subtitle.text = para.text
     if para.style.name.startswith('Heading'):
-        layout = prs.slide_layouts[1]
-        slide = prs.slides.add_slide(layout)
-        # slide.placeholders[1].getparent().remove(slide.placeholders[1])
-        heading = slide.shapes.title
-        heading.text = para.text
-
-        body_shape = slide.shapes.add_textbox(Inches(0.5),Inches(1.1),Inches(8.8),Inches(0.0))
-        tf = body_shape.text_frame
-        tf.word_wrap = True
-
+        if(not my_list[ct-1].startswith('Heading')):
+            layout = prs.slide_layouts[5]
+            slide = prs.slides.add_slide(layout)
+            # slide.placeholders[1].getparent().remove(slide.placeholders[1])
+            heading = slide.shapes.title
+            heading.text = para.text
+            
+            body_shape = slide.shapes.add_textbox(Inches(0.5),Inches(1.15),Inches(8.8),Inches(0.0))
+            tf = body_shape.text_frame
+            tf.word_wrap = True
+        else:
+            p = tf.add_paragraph()
+            p.font.bold = True
+            p.font.size = Pt(16)
+            #head += para.text + '\n'
+            p.text = para.text
 
     if(para.style.name == 'Normal'):
 
@@ -63,8 +74,8 @@ for para in document.paragraphs:
         # if(len(arr) > 2):
         #     result = gensim_summarizer(para.text)
         # else:
-        result = para.text
-
+        result = head + para.text
+        head = ''
         p = tf.add_paragraph()
         p.text = result
         p.level = 0
@@ -80,6 +91,7 @@ for para in document.paragraphs:
         top = (prs.slide_height - pixels_to_emu(height)) / 3
         pic = slide.shapes.add_picture(image_name, left, top)
 
+    ct+=1
     print para.style
 
 print(title.text, subtitle.text)

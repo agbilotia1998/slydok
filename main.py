@@ -17,6 +17,15 @@ import time
 
 app = Flask(__name__)
 
+def get_template_name(arg):
+    switcher  = {
+        1: 'consulting.pptx',
+        2: 'pitch.pptx',
+        3: 'your_big_idea.pptx',
+        4: 'portfolio.pptx'
+    }
+    return switcher.get(arg)
+
 def get_filename(url):
     s = url.split('/')
     print s[-2]
@@ -25,6 +34,8 @@ def get_filename(url):
 @app.route("/")
 def go():
     filep = request.args.get('filename')
+    template = request.args.get('templNo')
+    template = int(template)
     filep = filep[1:len(filep) - 1]
     print filep
     type = request.args.get('flag')
@@ -42,8 +53,8 @@ def go():
 
 
     document = Document(filename)
-
-    prs = Presentation()
+    template = get_template_name(template)
+    prs = Presentation('templates/' + template)
     title_slide_layout = prs.slide_layouts[0]
     slide = prs.slides.add_slide(title_slide_layout)
     title = slide.shapes.title

@@ -10,11 +10,12 @@ from oauth2client.client import OAuth2WebServerFlow
 from googleapiclient import http
 from io import FileIO
 from httplib2 import Http
+import sys
 
 # Copy your credentials from the console
 # https://console.developers.google.com
-CLIENT_ID = os.environ['ID']
-CLIENT_SECRET = os.environ['SECRET']
+CLIENT_ID = os.environ['CLIENT_ID']
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
 
 
 OAUTH_SCOPE = 'https://www.googleapis.com/auth/drive'
@@ -39,12 +40,12 @@ if credentials is None:
 
 
 # Create an httplib2.Http object and authorize it with our credentials
-httpq = credentials.authorize(Http())     
+httpq = credentials.authorize(Http())
 drive_service = build('drive', 'v3', http=httpq)
-file_id = '1-n5YAWQxgGcfsDAngsaVK9Mv3Xq2jGZyLZtAYpXCXRg'
+file_id = sys.argv[1]
 request = drive_service.files().export_media(fileId=file_id,
-                                             mimeType='application/vnd.oasis.opendocument.text')
-fh = FileIO('test.doc', 'wb')
+                                             mimeType='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+fh = FileIO('test.docx', 'wb')
 downloader = http.MediaIoBaseDownload(fh, request)
 done = False
 while done is False:
